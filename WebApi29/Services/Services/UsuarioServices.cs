@@ -11,24 +11,24 @@ namespace WebApi29.Services.Services
 {
     public class UsuarioServices : IUsuarioServices
     {
-        private readonly ApplicationDbContext _context;   //el guion bajo es por la proteccion
+        private readonly ApplicationDbContext _context;   // el guion bajo es por la proteccion
+
         public UsuarioServices(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        //Lista de usuarios
+        // Lista de usuarios
         public async Task<Response<List<Usuario>>> GetAll()
         {
             try
             {
-                List<Usuario> response = await _context.Usuarios.Include(x=> x.Roles).ToListAsync();
+                List<Usuario> response = await _context.Usuarios.Include(x => x.Roles).ToListAsync();
                 return new Response<List<Usuario>>(response, "Lista de Usuarios");
-
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocurrio un error " + ex.Message);
+                return new Response<List<Usuario>>(null, "Ocurrió un error al obtener los usuarios: " + ex.Message);                    //se le especifica al usuario que es que salio mal
             }
         }
 
@@ -39,13 +39,16 @@ namespace WebApi29.Services.Services
             {
                 // Usuario usuario = await _context.Usuarios.FirstOrDefaultAsync(x => x.PkUsuario == id);
 
-                Usuario usuario = await _context.Usuarios.FindAsync(id);      //esta es otra forma de hacer la busqueda por el id
-                return new Response<Usuario>(usuario);
+                Usuario usuario = await _context.Usuarios.FindAsync(id);      // esta es otra forma de hacer la búsqueda por el id
 
+                if (usuario == null)
+                    return new Response<Usuario>(null, "Usuario no encontrado");
+
+                return new Response<Usuario>(usuario);
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocurrió un error " + ex.Message);
+                return new Response<Usuario>(null, "Ocurrió un error al obtener el usuario: " + ex.Message);                        //se le especifica al usuario que es que salio mal
             }
         }
 
@@ -64,16 +67,14 @@ namespace WebApi29.Services.Services
                 _context.Usuarios.Add(usuario1);
                 await _context.SaveChangesAsync();
 
-                return new Response<Usuario>(usuario1);
+                return new Response<Usuario>(usuario1, "Usuario creado correctamente");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return new Response<Usuario>(null, "Ocurrió un error al crear el usuario: " + ex.Message);    //se le especifica al usuario que es que salio mal
             }
         }
 
-       
         public async Task<Response<Usuario>> Delete(int id)
         {
             try
@@ -88,12 +89,10 @@ namespace WebApi29.Services.Services
                 await _context.SaveChangesAsync();
 
                 return new Response<Usuario>(usuario, "Usuario eliminado correctamente");
-
             }
             catch (Exception ex)
             {
-
-                throw new Exception("Ocurrió un error: " + ex.Message);
+                return new Response<Usuario>(null, "Ocurrió un error al eliminar el usuario: " + ex.Message);               //se le especifica al usuario que es que salio mal
             }
         }
 
@@ -102,7 +101,10 @@ namespace WebApi29.Services.Services
             try
             {
                 var usuario = await _context.Usuarios.FindAsync(id);
-                if (usuario == null) { return new Response<Usuario>(null, "Usuario no encontrado");  }
+                if (usuario == null)
+                {
+                    return new Response<Usuario>(null, "Usuario no encontrado");
+                }
 
                 usuario.Nombre = UpdUser.Nombre;
                 usuario.Password = UpdUser.Password;
@@ -113,17 +115,11 @@ namespace WebApi29.Services.Services
                 await _context.SaveChangesAsync();
 
                 return new Response<Usuario>(usuario, "Usuario actualizado correctamente");
-                    
-                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return new Response<Usuario>(null, "Ocurrió un error al actualizar el usuario: " + ex.Message);     //se le especifica al usuario que es que salio mal
             }
         }
-
-
     }
 }
-//inv q es dto, que es jwt token, que hace asp .net core, que es programacion asincrona

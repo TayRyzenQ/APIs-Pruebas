@@ -17,51 +17,86 @@ namespace WebApi29.Services.Services
 
         public async Task<Response<List<Rol>>> GetAll()
         {
-            var roles = await _context.Roles.ToListAsync();
-            return new Response<List<Rol>>(roles, "Lista de roles");
+            try
+            {
+                var roles = await _context.Roles.ToListAsync();
+                return new Response<List<Rol>>(roles, "Lista de roles");
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<Rol>>(null, $"Error al obtener roles: {ex.Message}");      //se le especifica al usuario que es que salio mal
+            }
         }
 
         public async Task<Response<Rol>> GetById(int id)
         {
-            var rol = await _context.Roles.FindAsync(id);
-            if (rol == null)
-                return new Response<Rol>(null, "Rol no encontrado");
+            try
+            {
+                var rol = await _context.Roles.FindAsync(id);
+                if (rol == null)
+                    return new Response<Rol>(null, "Rol no encontrado");
 
-            return new Response<Rol>(rol);
+                return new Response<Rol>(rol);
+            }
+            catch (Exception ex)
+            {
+                return new Response<Rol>(null, $"Error al obtener el rol: {ex.Message}");           //se le especifica al usuario que es que salio mal
+            }
         }
 
         public async Task<Response<Rol>> Create(RolRequest request)
         {
-            var rol = new Rol { Nombre = request.Nombre };
-            _context.Roles.Add(rol);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var rol = new Rol { Nombre = request.Nombre };
+                _context.Roles.Add(rol);
+                await _context.SaveChangesAsync();
 
-            return new Response<Rol>(rol, "Rol creado exitosamente");
+                return new Response<Rol>(rol, "Rol creado exitosamente");
+            }
+            catch (Exception ex)
+            {
+                return new Response<Rol>(null, $"Error al crear el rol: {ex.Message}");    //se le especifica al usuario que es que salio mal
+            }
         }
 
         public async Task<Response<Rol>> Update(int id, RolRequest request)
         {
-            var rol = await _context.Roles.FindAsync(id);
-            if (rol == null)
-                return new Response<Rol>(null, "Rol no encontrado");
+            try
+            {
+                var rol = await _context.Roles.FindAsync(id);
+                if (rol == null)
+                    return new Response<Rol>(null, "Rol no encontrado");    
 
-            rol.Nombre = request.Nombre;
-            _context.Roles.Update(rol);
-            await _context.SaveChangesAsync();
+                rol.Nombre = request.Nombre;
+                _context.Roles.Update(rol);
+                await _context.SaveChangesAsync();
 
-            return new Response<Rol>(rol, "Rol actualizado correctamente");
+                return new Response<Rol>(rol, "Rol actualizado correctamente");
+            }
+            catch (Exception ex)
+            {
+                return new Response<Rol>(null, $"Error al actualizar el rol: {ex.Message}");  //se le especifica al usuario que es que salio mal
+            }
         }
 
         public async Task<Response<Rol>> Delete(int id)
         {
-            var rol = await _context.Roles.FindAsync(id);
-            if (rol == null)
-                return new Response<Rol>(null, "Rol no encontrado");
+            try
+            {
+                var rol = await _context.Roles.FindAsync(id);
+                if (rol == null)
+                    return new Response<Rol>(null, "Rol no encontrado");
 
-            _context.Roles.Remove(rol);
-            await _context.SaveChangesAsync();
+                _context.Roles.Remove(rol);
+                await _context.SaveChangesAsync();
 
-            return new Response<Rol>(rol, "Rol eliminado correctamente");
+                return new Response<Rol>(rol, "Rol eliminado correctamente");
+            }
+            catch (Exception ex)
+            {
+                return new Response<Rol>(null, $"Error al eliminar el rol: {ex.Message}");      //se le especifica al usuario que es que salio mal
+            }
         }
     }
 }
