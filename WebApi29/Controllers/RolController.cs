@@ -1,10 +1,11 @@
 ﻿using Domain.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi29.Services.IServices;
 
 namespace WebApi29.Controllers
 {
-
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class RolController : Controller
@@ -16,6 +17,7 @@ namespace WebApi29.Controllers
             _rolServices = rolServices;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,6 +25,7 @@ namespace WebApi29.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -33,6 +36,7 @@ namespace WebApi29.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(RolRequest request)
         {
@@ -40,6 +44,7 @@ namespace WebApi29.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, RolRequest request)
         {
@@ -50,6 +55,7 @@ namespace WebApi29.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

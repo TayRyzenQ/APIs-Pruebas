@@ -28,6 +28,7 @@ namespace WebApi29.Context
                 });
 
 
+
             //Insertar en la tabla Roles
 
             modelBuilder.Entity<Rol>().HasData(
